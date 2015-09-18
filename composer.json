@@ -16,7 +16,6 @@
   ],
 
   "require": {
-    "php" : ">=5.3.9",
     "theorchard/monolog-cascade" : "^0.2.0"
   },
 
