@@ -1,10 +1,10 @@
 {
-  "name":        "datravel-com/php-debug",
+  "name":        "datravel/php-debug",
   "description": "The Debug component provides tools to ease debugging PHP code.",
   "version":     "0.0.7",
   "type":        "library",
   "keywords":    ["php", "error", "debug", "library", "monolog", "cascade", "monolog extension", "monolog plugin", "monolog utils", "logger", "log"],
-  "homepage":    "http://github.com/datravel-com/php-debug",
+  "homepage":    "http://github.com/datravel/php-debug",
   "license":     "MIT",
 
   "authors": [
