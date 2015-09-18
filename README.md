@@ -1,7 +1,7 @@
-YaproDebug
+PHPDebug
 ===============
 
-YaproDebug is a [Monolog Cascade](https://github.com/theorchard/monolog-cascade) extension that which gives you the opportunity to handle and log errors of different levels.
+PHPDebug is a [Monolog Cascade](https://github.com/theorchard/monolog-cascade) extension that which gives you the opportunity to handle and log errors of different levels.
 
 ------------
 
@@ -9,12 +9,10 @@ YaproDebug is a [Monolog Cascade](https://github.com/theorchard/monolog-cascade)
 Installation
 ------------
 
-Add YaproDebug as a requirement in your `composer.json` file or run
+Add PHPDebug as a requirement in your `composer.json` file or run
 ```sh
-$ composer require yapro/debug
+$ composer require datravel/php-debug
 ```
-
-Note: YaproDebug requires PHP 5.3.9 or higher.
 
 Usage
 -----
