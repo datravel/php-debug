@@ -39,16 +39,18 @@ final class ErrorHandler
      * @param number $type
      * @param string $message
      * @param string $file
-     * @param number $line
+     * @param int $line
+     * @param array $extra
      * @throws DebugException if error type is E_RECOVERABLE_ERROR
      */
-    public function handleError($type, $message, $file, $line)
+    public function handleError($type, $message, $file = '', $line = 0, array $extra = array())
     {
         $e = (new DebugException)
             ->setCode($type)
             ->setFile($file)
             ->setLine($line)
-            ->setMessage($message);
+            ->setMessage($message)
+            ->setExtra($extra);
         $this->log($e);
         if ($type === E_RECOVERABLE_ERROR) {
             restore_error_handler();
@@ -63,6 +65,10 @@ final class ErrorHandler
      */
     private function isErrorIgnored($code)
     {
+        // converting code of exception
+        if ($code === 0) {
+            $code = E_ERROR;
+        }
         if ($code & $this->errorReporting) {
             return false;
         } else {
