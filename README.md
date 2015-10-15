@@ -83,7 +83,7 @@ $config = [
 More informations about configurations - https://github.com/theorchard/monolog-cascade
 
 
-What id DebugException
+What is DebugException
 ------------------------
 
 DebugException is exception which you can to create as object, to add the extra data and throw away. After throwing the Debugger will catches this exception and saves extra data to logs. Examples:
