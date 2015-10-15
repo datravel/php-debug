@@ -75,8 +75,26 @@ $config = [
             ]
         ]
     ],
-    'disable_existing_loggers' => true
+    'disable_existing_loggers' => true,
+    'errorReporting' => E_ALL & ~E_DEPRECATED & ~E_STRICT,
 ];
 ```
 
 More informations about configurations - https://github.com/theorchard/monolog-cascade
+
+
+What id DebugException
+------------------------
+
+DebugException is exception which you can to create as object, to add the extra data and throw away. After throwing the Debugger will catches this exception and saves extra data to logs. Examples:
+
+```
+throw (new DebugException())->setExtra('mixed data');
+```
+or:
+```
+try {
+    ...
+} catch (\Exception $e) {
+    throw (new DebugException())->setCustomTrace($e->getTraceAsString());
+```
