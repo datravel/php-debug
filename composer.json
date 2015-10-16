@@ -17,7 +17,7 @@
 
   "require": {
     "theorchard/monolog-cascade" : "^0.2.0",
-    "doctrine/common": "~2.4"
+    "doctrine/common": ">=2.0"
   },
 
   "autoload": {
