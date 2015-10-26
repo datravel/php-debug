@@ -8,7 +8,7 @@ use Doctrine\Common\Util\Debug;
 
 final class Log
 {
-    const LEVEL_DEPTH = 1;
+    const LEVEL_DEPTH = 2;
 
     /**
      * System is unusable.
@@ -175,13 +175,25 @@ final class Log
             class_exists('GuzzleHttp\Post\PostBody') &&
             $e instanceof \GuzzleHttp\Exception\RequestException
         ) {
-            $body = $e->getRequest()->getBody();
+            $request = $e->getRequest();
+            $body = $request->getBody();
             if ($body instanceof \GuzzleHttp\Post\PostBody && $fields = $body->getFields()) {
                 // find bad provider
                 if (!empty($fields['providers'][0])) {
                     $context['providerId'] = (int)$fields['providers'][0];
                 }
             }
+            $headers = [];
+            foreach ($request->getHeaders() as $name => $values) {
+                $headers[$name] = implode(', ', $values);
+            }
+
+            $context['guzzleRequest'] = [
+                'url' => $request->getUrl(),
+                'method' => $request->getMethod(),
+                'config' => $request->getConfig(),
+                'headers' => implode(': ', $headers),
+            ];
         }
 
         Cascade::getLogger('mainLogger')->log($level, self::export($message), self::dumpContext($context));

@@ -20,6 +20,10 @@
     "doctrine/common": ">=2.0"
   },
 
+  "require-dev": {
+    "guzzlehttp/guzzle": "5.*"
+  },
+
   "autoload": {
     "psr-4": {
       "Debug\\": "src/"
