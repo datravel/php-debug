@@ -185,14 +185,14 @@ final class Log
             }
             $headers = [];
             foreach ($request->getHeaders() as $name => $values) {
-                $headers[$name] = implode(', ', $values);
+                $headers[] = $name . ':' . implode(', ', $values);
             }
 
             $context['guzzleRequest'] = [
                 'url' => $request->getUrl(),
                 'method' => $request->getMethod(),
                 'config' => $request->getConfig(),
-                'headers' => implode(': ', $headers),
+                'headers' => implode('; ', $headers),
             ];
         }
 
