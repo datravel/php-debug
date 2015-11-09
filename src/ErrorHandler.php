@@ -1,9 +1,28 @@
 <?php
 namespace Debug;
 
+use Psr\Log\LogLevel;
+
 final class ErrorHandler
 {
     private $errorReporting;
+    private $errorLevelMap = array(
+        E_ERROR             => LogLevel::CRITICAL,
+        E_WARNING           => LogLevel::WARNING,
+        E_PARSE             => LogLevel::ALERT,
+        E_NOTICE            => LogLevel::NOTICE,
+        E_CORE_ERROR        => LogLevel::CRITICAL,
+        E_CORE_WARNING      => LogLevel::WARNING,
+        E_COMPILE_ERROR     => LogLevel::ALERT,
+        E_COMPILE_WARNING   => LogLevel::WARNING,
+        E_USER_ERROR        => LogLevel::ERROR,
+        E_USER_WARNING      => LogLevel::WARNING,
+        E_USER_NOTICE       => LogLevel::NOTICE,
+        E_STRICT            => LogLevel::NOTICE,
+        E_RECOVERABLE_ERROR => LogLevel::ERROR,
+        E_DEPRECATED        => LogLevel::NOTICE,
+        E_USER_DEPRECATED   => LogLevel::NOTICE,
+    );
 
     public function register($errorReporting)
     {
@@ -24,7 +43,7 @@ final class ErrorHandler
             ->setFile($lastError['file'])
             ->setLine($lastError['line'])
             ->setMessage($lastError['message']);
-        $this->log($e);
+        Log::critical($e);
     }
 
     /**
@@ -32,11 +51,11 @@ final class ErrorHandler
      */
     public function handleException(\Exception $e)
     {
-        $this->log($e);
+        Log::critical($e);
     }
 
     /**
-     * @param number $type
+     * @param int $type
      * @param string $message
      * @param string $file
      * @param int $line
@@ -45,45 +64,22 @@ final class ErrorHandler
      */
     public function handleError($type, $message, $file = '', $line = 0, array $extra = array())
     {
+        // is error ignored
+        if (!($type & $this->errorReporting)) {
+            return;
+        }
         $e = (new DebugException)
             ->setCode($type)
             ->setFile($file)
             ->setLine($line)
             ->setMessage($message)
             ->setExtra($extra);
-        $this->log($e);
+        $errorLevel = array_key_exists($type, $this->errorLevelMap) ? $this->errorLevelMap[$type] : LogLevel::CRITICAL;
+        Log::log($errorLevel, $e);
         if ($type === E_RECOVERABLE_ERROR) {
             restore_error_handler();
             restore_exception_handler();
             throw new $e;
         }
-    }
-
-    /**
-     * @param int $code
-     * @return bool
-     */
-    private function isErrorIgnored($code)
-    {
-        // converting code of exception
-        if ($code === 0) {
-            $code = E_ERROR;
-        }
-        if ($code & $this->errorReporting) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param \Exception $e
-     */
-    private function log(\Exception $e)
-    {
-        if ($this->isErrorIgnored($e->getCode())) {
-            return;
-        }
-        Log::critical($e);
     }
 }

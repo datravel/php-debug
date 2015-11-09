@@ -46,13 +46,25 @@ $config = [
         ]
     ],
     'handlers' => [
+        'output' => [
+            'class' => \Monolog\Handler\StreamHandler::class,
+            'level' => 'ERROR',
+            'formatter' => 'dashed',
+            'stream' => 'php://output'
+        ],
+        'console' => [
+            'class' => \Monolog\Handler\StreamHandler::class,
+            'level' => 'DEBUG',
+            'formatter' => 'dashed',
+            'stream' => 'php://stdout'
+        ],
         'console' => [
             'class' => 'Monolog\Handler\StreamHandler',
             'level' => 'DEBUG',
             'formatter' => 'dashed',
             'stream' => 'php://stdout'
         ],
-        'info_file_handler' => [
+        'file' => [
             'class' => 'Monolog\Handler\StreamHandler',
             'level' => 'INFO',
             'formatter' => 'dashed',
@@ -67,8 +79,9 @@ $config = [
     'loggers' => [
         'mainLogger' => [
             'handlers' => [
-                0 => 'console',
-                1 => 'info_file_handler'
+                0 => 'output',
+                1 => 'console',
+                2 => 'file'
             ],
             'processors' => [
                 0 => 'web_processor'

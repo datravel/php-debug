@@ -125,7 +125,7 @@ final class Log
      * @param mixed $context
      * @return null
      */
-    private static function log($level, $message, $context = null)
+    public static function log($level, $message, $context = null)
     {
         // on this place we can allow create unique indexes for the platform of Kibana
         $context = [
