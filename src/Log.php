@@ -189,6 +189,7 @@ final class Log
             }
 
             $context['guzzleRequest'] = [
+                'host' => $request->getHost(),
                 'url' => $request->getUrl(),
                 'method' => $request->getMethod(),
                 'config' => $request->getConfig(),
