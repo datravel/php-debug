@@ -9,6 +9,7 @@ use Doctrine\Common\Util\Debug;
 final class Log
 {
     const LEVEL_DEPTH = 2;
+    const MAX_LENGTH_BAD_RESPONSE = 2000;
 
     /**
      * System is unusable.
@@ -171,9 +172,9 @@ final class Log
         }
 
         if (
-            class_exists('GuzzleHttp\Exception\RequestException') &&
             class_exists('GuzzleHttp\Post\PostBody') &&
-            $e instanceof \GuzzleHttp\Exception\RequestException
+            (class_exists('GuzzleHttp\Exception\RequestException') && $e instanceof \GuzzleHttp\Exception\RequestException) ||
+            (class_exists('GuzzleHttp\Exception\ConnectException') && $e instanceof \GuzzleHttp\Exception\ConnectException)
         ) {
             $request = $e->getRequest();
             $body = $request->getBody();
@@ -183,6 +184,7 @@ final class Log
                     $context['providerId'] = (int)$fields['providers'][0];
                 }
             }
+
             $headers = [];
             foreach ($request->getHeaders() as $name => $values) {
                 $headers[] = $name . ':' . implode(', ', $values);
@@ -194,6 +196,7 @@ final class Log
                 'method' => $request->getMethod(),
                 'config' => $request->getConfig(),
                 'headers' => implode('; ', $headers),
+                'response' => mb_substr($e->getResponse()->getBody(), 0, self::MAX_LENGTH_BAD_RESPONSE),
             ];
         }
 
