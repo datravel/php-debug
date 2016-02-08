@@ -15,6 +15,11 @@ final class DebugException extends \Exception
     private $extra;
 
     /**
+     * @var string
+     */
+    private $extraCode;
+
+    /**
      * @return string
      */
     public function getCustomTrace()
@@ -87,6 +92,24 @@ final class DebugException extends \Exception
     public function setExtra($extra)
     {
         $this->extra = $extra;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExtraCode()
+    {
+        return $this->extraCode;
+    }
+
+    /**
+     * @param string $extraCode
+     * @return $this
+     */
+    public function setExtraCode($extraCode)
+    {
+        $this->extraCode = $extraCode;
         return $this;
     }
 }

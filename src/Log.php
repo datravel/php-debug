@@ -8,7 +8,7 @@ use Doctrine\Common\Util\Debug;
 
 final class Log
 {
-    const LEVEL_DEPTH = 2;
+    const LEVEL_DEPTH = 3;
     const MAX_LENGTH_BAD_RESPONSE = 2000;
 
     /**

@@ -5,7 +5,14 @@ use Psr\Log\LogLevel;
 
 final class ErrorHandler
 {
+    /**
+     * @var int
+     */
     private $errorReporting;
+
+    /**
+     * @var array
+     */
     private $errorLevelMap = array(
         E_ERROR             => LogLevel::CRITICAL,
         E_WARNING           => LogLevel::WARNING,
@@ -64,8 +71,7 @@ final class ErrorHandler
      */
     public function handleError($type, $message, $file = '', $line = 0, array $extra = array())
     {
-        // is error ignored
-        if (!($type & $this->errorReporting)) {
+        if ($this->isErrorIgnored($type)) {
             return;
         }
         $e = (new DebugException)
@@ -80,6 +86,19 @@ final class ErrorHandler
             restore_error_handler();
             restore_exception_handler();
             throw new $e;
+        }
+    }
+
+    /**
+     * @param int $type
+     * @return bool
+     */
+    private function isErrorIgnored($type)
+    {
+        if (!($type & $this->errorReporting)) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
