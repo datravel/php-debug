@@ -196,8 +196,10 @@ final class Log
                 'method' => $request->getMethod(),
                 'config' => $request->getConfig(),
                 'headers' => implode('; ', $headers),
-                'response' => mb_substr($e->getResponse()->getBody(), 0, self::MAX_LENGTH_BAD_RESPONSE),
             ];
+            if($e->getResponse()){
+                $context['guzzleRequest']['response'] = mb_substr($e->getResponse()->getBody(), 0, self::MAX_LENGTH_BAD_RESPONSE);
+            }
         }
 
         Cascade::getLogger('mainLogger')->log($level, self::export($message), self::dumpContext($context));
