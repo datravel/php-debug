@@ -45,12 +45,16 @@ final class ErrorHandler
         if (empty($lastError['type'])) {
             return;
         }
+        if ($this->isErrorIgnored($lastError['type'])) {
+            return;
+        }
         $e = (new DebugException)
             ->setCode($lastError['type'])
             ->setFile($lastError['file'])
             ->setLine($lastError['line'])
             ->setMessage($lastError['message']);
-        Log::critical($e);
+        $errorLevel = array_key_exists($lastError['type'], $this->errorLevelMap) ? $this->errorLevelMap[$lastError['type']] : LogLevel::CRITICAL;
+        Log::log($errorLevel, $e);
     }
 
     /**

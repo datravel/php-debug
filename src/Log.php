@@ -197,7 +197,7 @@ final class Log
                 'config' => $request->getConfig(),
                 'headers' => implode('; ', $headers),
             ];
-            if($e->getResponse()){
+            if (interface_exists('GuzzleHttp\Message\MessageInterface') && $e->getResponse() instanceof \GuzzleHttp\Message\MessageInterface) {
                 $context['guzzleRequest']['response'] = mb_substr($e->getResponse()->getBody(), 0, self::MAX_LENGTH_BAD_RESPONSE);
             }
         }
