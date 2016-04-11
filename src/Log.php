@@ -11,6 +11,8 @@ final class Log
     const LEVEL_DEPTH = 3;
     const MAX_LENGTH_BAD_RESPONSE = 2000;
 
+    static private $cachedContext = [];
+
     /**
      * System is unusable.
      *
@@ -202,7 +204,46 @@ final class Log
             }
         }
 
-        Cascade::getLogger('mainLogger')->log($level, self::export($message), self::dumpContext($context));
+        $message = self::export($message);
+        $context = self::getCachedContextDump($level, $message, $context);
+        Cascade::getLogger('mainLogger')->log($level, $message, $context);
+    }
+
+    /**
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return array
+     */
+    private static function getCachedContextDump($level, $message, array $context)
+    {
+        $cacheKey = self::getCacheKey($level, $message, $context);
+        if (!array_key_exists($cacheKey, self::$cachedContext)) {
+            self::$cachedContext[$cacheKey] = self::dumpContext($context);
+        }
+
+        return self::$cachedContext[$cacheKey];
+    }
+
+    /**
+     * @param string $level
+     * @param string $message
+     * @param array  $context
+     *
+     * @return string
+     */
+    private static function getCacheKey($level, $message, array $context)
+    {
+        $key = $level.$message;
+        if (array_key_exists('file', $context)) {
+            $key .= $context['file'];
+        }
+        if (array_key_exists('line', $context)) {
+            $key .= $context['line'];
+        }
+
+        return md5($key);
     }
 
     /**
