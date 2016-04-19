@@ -2,7 +2,7 @@
 
 namespace Debug;
 
-final class DebugException extends \Exception
+class DebugException extends \Exception
 {
     /**
      * @var string
