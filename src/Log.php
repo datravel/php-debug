@@ -2,7 +2,6 @@
 
 namespace Debug;
 
-use Cascade\Cascade;
 use Monolog\Logger;
 use Doctrine\Common\Util\Debug;
 
@@ -206,7 +205,7 @@ final class Log
 
         $message = self::export($message);
         $context = self::getCachedContextDump($level, $message, $context);
-        Cascade::getLogger('mainLogger')->log($level, $message, $context);
+        $GLOBALS['kernel']->getContainer()->get('logger')->log($level, $message, $context);
     }
 
     /**
