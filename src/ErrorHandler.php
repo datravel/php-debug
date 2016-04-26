@@ -55,6 +55,7 @@ final class ErrorHandler
             ->setMessage($lastError['message']);
         $errorLevel = array_key_exists($lastError['type'], $this->errorLevelMap) ? $this->errorLevelMap[$lastError['type']] : LogLevel::CRITICAL;
         Log::log($errorLevel, $e);
+        $this->sendInternalServerErrorHeader();
     }
 
     /**
@@ -63,6 +64,7 @@ final class ErrorHandler
     public function handleException(\Exception $e)
     {
         Log::critical($e);
+        $this->sendInternalServerErrorHeader();
     }
 
     /**
@@ -103,6 +105,13 @@ final class ErrorHandler
             return true;
         } else {
             return false;
+        }
+    }
+
+    private function sendInternalServerErrorHeader()
+    {
+        if (php_sapi_name() !== 'cli' && !headers_sent() && PHP_MAJOR_VERSION < 7) {
+            header('HTTP/1.0 500 Internal Server Error');
         }
     }
 }
