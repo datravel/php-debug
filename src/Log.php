@@ -168,41 +168,6 @@ final class Log
             $context['subrequestId'] = $loggerProfiler->getSubrequestId();
         }
 
-        if (class_exists('TC\Logger\CurrentRequestHelper')) {
-            $context['requestAsCurl'] = (new \TC\Logger\CurrentRequestHelper())->getRequestAsCurl();
-        }
-
-        if (
-            class_exists('GuzzleHttp\Post\PostBody') &&
-            (class_exists('GuzzleHttp\Exception\RequestException') && $e instanceof \GuzzleHttp\Exception\RequestException) ||
-            (class_exists('GuzzleHttp\Exception\ConnectException') && $e instanceof \GuzzleHttp\Exception\ConnectException)
-        ) {
-            $request = $e->getRequest();
-            $body = $request->getBody();
-            if ($body instanceof \GuzzleHttp\Post\PostBody && $fields = $body->getFields()) {
-                // find bad provider
-                if (!empty($fields['providers'][0])) {
-                    $context['providerId'] = (int)$fields['providers'][0];
-                }
-            }
-
-            $headers = [];
-            foreach ($request->getHeaders() as $name => $values) {
-                $headers[] = $name . ':' . implode(', ', $values);
-            }
-
-            $context['guzzleRequest'] = [
-                'host' => $request->getHost(),
-                'url' => $request->getUrl(),
-                'method' => $request->getMethod(),
-                'config' => $request->getConfig(),
-                'headers' => implode('; ', $headers),
-            ];
-            if (interface_exists('GuzzleHttp\Message\MessageInterface') && $e->getResponse() instanceof \GuzzleHttp\Message\MessageInterface) {
-                $context['guzzleRequest']['response'] = mb_substr($e->getResponse()->getBody(), 0, self::MAX_LENGTH_BAD_RESPONSE);
-            }
-        }
-
         $message = self::export($message);
         $context = self::getCachedContextDump($level, $message, $context);
         $GLOBALS['kernel']->getContainer()->get('logger')->log($level, $message, $context);
