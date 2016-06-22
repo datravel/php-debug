@@ -140,6 +140,13 @@ final class Log
             $message = $e->getMessage();
             $context['code'] = $e->getCode();
             $context['class'] = get_class($e);
+        } elseif (is_array($context) && array_key_exists('exception', $context) && $context['exception'] instanceof \Exception) {
+            $e = $context['exception'];
+            $context['code'] = $e->getCode();
+            $context['class'] = get_class($e);
+            if (is_string($message)) {
+                $message = trim($message . ' ' . $e->getMessage());
+            }
         } else {
             $e = new DebugException;
         }
