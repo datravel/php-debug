@@ -131,24 +131,29 @@ final class Log
     public static function log($level, $message, $context = null)
     {
         // on this place we can allow create unique indexes for the platform of Kibana
-        $context = [
-            'value' => $context,
-        ];
-
-        if ($message instanceof \Exception) {
-            $e = $message;
-            $message = $e->getMessage();
-            $context['code'] = $e->getCode();
-            $context['class'] = get_class($e);
-        } elseif (is_array($context) && array_key_exists('exception', $context) && $context['exception'] instanceof \Exception) {
+        if (is_array($context) && array_key_exists('exception', $context) && $context['exception'] instanceof \Exception) {
             $e = $context['exception'];
+            unset($context['exception']);
+            $context = [
+                'value' => $context,
+            ];
             $context['code'] = $e->getCode();
             $context['class'] = get_class($e);
             if (is_string($message)) {
                 $message = trim($message . ' ' . $e->getMessage());
             }
         } else {
-            $e = new DebugException;
+            $context = [
+                'value' => $context,
+            ];
+            if ($message instanceof \Exception) {
+                $e = $message;
+                $message = $e->getMessage();
+                $context['code'] = $e->getCode();
+                $context['class'] = get_class($e);
+            } else {
+                $e = new DebugException;
+            }
         }
 
         if ($e instanceof DebugException) {
